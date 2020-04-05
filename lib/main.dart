@@ -31,11 +31,14 @@ class _MyAppState extends State<MyApp> {
                   colors: Colors.orange,
                 ),
               ),
+              //Example
         bottomNavigationBar: SpotLightNavBar(
           onItemPressed: (i) {
-            setState(() {
-              x = i;
-            });
+            setState(
+              () {
+                x = i;
+              },
+            );
           },
           icons: [
             Icon(
