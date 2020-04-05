@@ -5,8 +5,16 @@ import 'package:spotlightnavbar/trapezium_painter.dart';
 
 class SpotLightNavBar extends StatefulWidget {
   final List<Icon> icons;
+  final Duration animationDuration;
+  final ValueChanged<int> onItemPressed;
+
   List<GlobalKey> keys = List();
-  SpotLightNavBar({@required this.icons}) {
+  SpotLightNavBar(
+      {Key key,
+      @required this.icons,
+      this.onItemPressed,
+      this.animationDuration})
+      : assert(icons != null) {
     for (int i = 0; i < icons.length; i++) {
       keys.add(GlobalKey());
     }
@@ -40,12 +48,13 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
         child: Stack(
           children: [
             AnimatedPositionedDirectional(
-              duration: Duration(milliseconds: 700),
+              duration: widget.animationDuration ?? Duration(milliseconds: 700),
               curve: Curves.decelerate,
               onEnd: () {
                 setState(
                   () {
                     _opacity = 0.23;
+                    widget.onItemPressed(_currentIndex);
                   },
                 );
               },
@@ -107,7 +116,7 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
                               () {
                                 if (_startPosition != position.dx) _opacity = 0;
                                 _startPosition = position.dx;
-                                _currentIndex = i;
+                                _onItemTapped(i);
                               },
                             );
                           },
@@ -123,6 +132,14 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
           ],
         ),
       ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(
+      () {
+        _currentIndex = index;
+      },
     );
   }
 
