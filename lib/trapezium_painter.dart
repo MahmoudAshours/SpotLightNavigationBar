@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LogoPainter extends CustomPainter {
+  static Color backgroundColorGradient;
+  LogoPainter({Color backgroundColor}) {
+    backgroundColorGradient = backgroundColor;
+  }
+
   final Path quadPath = new Path()
     ..moveTo(-5, 0)
     ..lineTo(35, 0)
@@ -10,14 +15,8 @@ class LogoPainter extends CustomPainter {
   final Gradient gradient = new LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: <Color>[
-      Colors.white38,
-      Color(0xff3B3B3B),
-      Color(0xff3B3B3B),
-      Color(0xff3B3B3B),
-      Color(0xff3B3B3B),
-    ],
-    stops: [0.1, 0.51, 1, 1, 1.0],
+    colors: <Color>[Colors.white38, backgroundColorGradient],
+    stops: [0.1, 0.51],
   );
   Rect rect = new Rect.fromCircle(
     center: new Offset(165.0, 55.0),

@@ -11,43 +11,56 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  PageController _controller;
+  @override
+  void initState() {
+    _controller = PageController();
+    super.initState();
+  }
+
   var x = 0;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(),
       home: Scaffold(
-        backgroundColor: Color(0xff3B3B3B),
-        body: x == 0
-            ? Center(
-                child: FlutterLogo(
-                  size: 600,
-                ),
-              )
-            : Center(
-                child: FlutterLogo(
-                  size: 600,
-                  colors: Colors.orange,
-                ),
+        backgroundColor: Colors.black,
+        body: PageView(
+          controller: _controller,
+          children: <Widget>[
+            Center(
+              child: FlutterLogo(),
+            ),
+            Center(
+              child: FlutterLogo(
+                colors: Colors.orange,
               ),
-              //Example
+            )
+          ],
+        ),
         bottomNavigationBar: SpotLightNavBar(
+          animationDuration: Duration(seconds: 1),
           onItemPressed: (i) {
-            setState(
-              () {
-                x = i;
-              },
-            );
+            setState(() => x = i);
           },
-          icons: [
+          selectedItemColor: Colors.red,
+          nonSelectedItemColor: Colors.blue,
+          items: [
             Icon(
-              Icons.disc_full,
-              color: Colors.white,
+              Icons.grain,
             ),
             Icon(
-              Icons.add_to_home_screen,
-              color: Colors.white30,
+              Icons.search,
+            ),
+            Icon(
+              Icons.flag,
+              size: 20,
+            ),
+            Row(
+              children: [Text('hihi'), Icon(Icons.add_to_home_screen)],
+            ),
+            Row(
+              children: [Text('hihi'), Icon(Icons.add_to_home_screen)],
             ),
           ],
         ),

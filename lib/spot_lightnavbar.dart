@@ -4,18 +4,46 @@ import 'package:spotlightnavbar/showUp.dart';
 import 'package:spotlightnavbar/trapezium_painter.dart';
 
 class SpotLightNavBar extends StatefulWidget {
-  final List<Icon> icons;
+  ///The items in the navigation bar.
+  ///[items] shouldn't be null
+  final List<Widget> items;
+
+  ///Duration of spotlight animation.
   final Duration animationDuration;
+
+  ///Curve of the animation.
+  final Curve animationCurve;
+
+  ///Action when the index changes.
   final ValueChanged<int> onItemPressed;
 
-  List<GlobalKey> keys = List();
-  SpotLightNavBar(
-      {Key key,
-      @required this.icons,
-      this.onItemPressed,
-      this.animationDuration})
-      : assert(icons != null) {
-    for (int i = 0; i < icons.length; i++) {
+  ///Global keys that identify the global position of the widget.
+  final List<GlobalKey> keys = List();
+
+  ///[selectedItemColor] is the item color when selected.
+  final Color selectedItemColor;
+
+  ///[nonSelectedItemColor] is when the item is'nt selected.
+  final Color nonSelectedItemColor;
+
+  ///The bottom navigation bar color
+  final Color bottomNavBarColor;
+
+  /// The small spotlight color
+  final Color spotLightColor;
+
+  SpotLightNavBar({
+    Key key,
+    @required this.items,
+    this.onItemPressed,
+    this.selectedItemColor,
+    this.nonSelectedItemColor,
+    this.bottomNavBarColor,
+    this.animationCurve,
+    this.spotLightColor,
+    this.animationDuration,
+  }) : assert(items != null) {
+    for (int i = 0; i < items.length; i++) {
       keys.add(GlobalKey());
     }
   }
@@ -25,7 +53,7 @@ class SpotLightNavBar extends StatefulWidget {
 }
 
 class _SpotLightNavBarState extends State<SpotLightNavBar> {
-  double _startPosition;
+  double _spotLightPosition;
   double _opacity = 0.23;
   int _currentIndex = 0;
 
@@ -33,7 +61,7 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
   void initState() {
     SchedulerBinding.instance.addPostFrameCallback(
       (_) {
-        _startPosition = _getPosition();
+        _spotLightPosition = _getPosition();
       },
     );
     super.initState();
@@ -43,13 +71,13 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        color: Color(0xff3B3B3B),
+        color: widget.bottomNavBarColor ?? Color(0xff3B3B3B),
         height: 50,
         child: Stack(
           children: [
             AnimatedPositionedDirectional(
               duration: widget.animationDuration ?? Duration(milliseconds: 700),
-              curve: Curves.decelerate,
+              curve: widget.animationCurve ?? Curves.decelerate,
               onEnd: () {
                 setState(
                   () {
@@ -58,13 +86,14 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
                   },
                 );
               },
-              start: _startPosition ?? 0,
+              start: _spotLightPosition ?? 0,
               child: Column(
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: widget.spotLightColor ?? Colors.white,
                       boxShadow: [
+                        ///Shadows of [_spotLightPosition]
                         BoxShadow(
                           color: Colors.black26,
                           spreadRadius: 2,
@@ -90,7 +119,10 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
                         width: 30,
                         height: 50,
                         child: CustomPaint(
-                          painter: LogoPainter(),
+                          painter: LogoPainter(
+                            backgroundColor:
+                                widget.bottomNavBarColor ?? Color(0xff3B3B3B),
+                          ),
                         ),
                       ),
                     ),
@@ -102,10 +134,10 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.end,
-                children: widget.icons
+                children: widget.items
                     .asMap()
                     .map(
-                      (int i, Icon iconItem) => MapEntry(
+                      (int i, Widget iconItem) => MapEntry(
                         i,
                         GestureDetector(
                           onTap: () {
@@ -114,14 +146,31 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
                             Offset position = box.localToGlobal(Offset.zero);
                             setState(
                               () {
-                                if (_startPosition != position.dx) _opacity = 0;
-                                _startPosition = position.dx;
-                                _onItemTapped(i);
+                                //To identify the center of the widget
+                                var center = box.size.width / 5;
+                                _spotLightPosition = position.dx + center;
+
+                                if (_spotLightPosition != position.dx)
+                                  _opacity = 0;
+
+                                _currentIndex = i;
                               },
                             );
                           },
                           key: widget.keys[i],
-                          child: Center(child: iconItem),
+                          child: Center(
+                            child: IconTheme(
+                              data: _currentIndex == i
+                                  ? IconThemeData(
+                                      color: widget.selectedItemColor ??
+                                          Colors.white,
+                                    )
+                                  : IconThemeData(
+                                      color: widget.nonSelectedItemColor ??
+                                          Colors.white24),
+                              child: iconItem,
+                            ),
+                          ),
                         ),
                       ),
                     )
@@ -135,14 +184,7 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
     );
   }
 
-  void _onItemTapped(int index) {
-    setState(
-      () {
-        _currentIndex = index;
-      },
-    );
-  }
-
+  //To get the widget position globally
   double _getPosition() {
     RenderBox box = widget.keys[0].currentContext.findRenderObject();
     Offset position = box.localToGlobal(Offset.zero);
