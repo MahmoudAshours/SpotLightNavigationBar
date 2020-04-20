@@ -62,6 +62,7 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
     SchedulerBinding.instance.addPostFrameCallback(
       (_) {
         _spotLightPosition = _getPosition();
+        setState(() {});
       },
     );
     super.initState();
@@ -71,7 +72,7 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        color: widget.bottomNavBarColor ?? Color(0xff3B3B3B),
+        color: widget.bottomNavBarColor ?? Theme.of(context).primaryColor,
         height: 50,
         child: Stack(
           children: [

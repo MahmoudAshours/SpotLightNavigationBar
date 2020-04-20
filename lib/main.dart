@@ -18,33 +18,36 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  var x = 0;
+  var index = 0;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(),
       home: Scaffold(
-        backgroundColor: Colors.black,
-        body: PageView(
-          controller: _controller,
-          children: <Widget>[
-            Center(
-              child: FlutterLogo(),
-            ),
-            Center(
-              child: FlutterLogo(
-                colors: Colors.orange,
-              ),
-            )
-          ],
-        ),
+        backgroundColor: Color(0xff3B3B3B),
+        body: index == 0
+            ? Center(
+                child: FlutterLogo(
+                  colors: Colors.orange,
+                  size: 300,
+                ),
+              )
+            : index == 1
+                ? Center(child: FlutterLogo(size: 250))
+                : Center(
+                    child: FlutterLogo(
+                      size: 200,
+                      colors: Colors.red,
+                    ),
+                  ),
         bottomNavigationBar: SpotLightNavBar(
           animationDuration: Duration(seconds: 1),
           onItemPressed: (i) {
-            setState(() => x = i);
+            setState(() => index = i);
           },
-          selectedItemColor: Colors.red,
-          nonSelectedItemColor: Colors.blue,
+          selectedItemColor: Colors.white,
+          bottomNavBarColor: Color(0xff3B3B3B),
+          nonSelectedItemColor: Colors.white30,
           items: [
             Icon(
               Icons.grain,
@@ -55,12 +58,6 @@ class _MyAppState extends State<MyApp> {
             Icon(
               Icons.flag,
               size: 20,
-            ),
-            Row(
-              children: [Text('hihi'), Icon(Icons.add_to_home_screen)],
-            ),
-            Row(
-              children: [Text('hihi'), Icon(Icons.add_to_home_screen)],
             ),
           ],
         ),
