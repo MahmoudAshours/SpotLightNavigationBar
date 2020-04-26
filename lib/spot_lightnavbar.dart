@@ -147,29 +147,29 @@ class _SpotLightNavBarState extends State<SpotLightNavBar> {
                             Offset position = box.localToGlobal(Offset.zero);
                             setState(
                               () {
-                                //To identify the center of the widget
-                                var center = box.size.width / 5;
-                                _spotLightPosition = position.dx + center;
+                                _spotLightPosition = position.dx;
 
-                                if (_spotLightPosition != position.dx)
-                                  _opacity = 0;
+                                _opacity = 0;
 
                                 _currentIndex = i;
                               },
                             );
                           },
                           key: widget.keys[i],
-                          child: Center(
-                            child: IconTheme(
-                              data: _currentIndex == i
-                                  ? IconThemeData(
-                                      color: widget.selectedItemColor ??
-                                          Colors.white,
-                                    )
-                                  : IconThemeData(
-                                      color: widget.nonSelectedItemColor ??
-                                          Colors.white24),
-                              child: iconItem,
+                          child: Container(
+                            width: 38,
+                            child: Center(
+                              child: IconTheme(
+                                data: _currentIndex == i
+                                    ? IconThemeData(
+                                        color: widget.selectedItemColor ??
+                                            Colors.white,
+                                      )
+                                    : IconThemeData(
+                                        color: widget.nonSelectedItemColor ??
+                                            Colors.white24),
+                                child: iconItem,
+                              ),
                             ),
                           ),
                         ),
